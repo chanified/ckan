@@ -163,9 +163,16 @@ class PackageSearchIndex(SearchIndex):
         # flatten the structure for indexing:
         for resource in pkg_dict.get('resources', []):
             for (okey, nkey) in [('description', 'res_description'),
-                                 ('format', 'res_format'),
+                                 # ('format', 'res_format'),
                                  ('url', 'res_url')]:
                 pkg_dict[nkey] = pkg_dict.get(nkey, []) + [resource.get(okey, u'')]
+
+            # EU ODP:
+            # use resource mimetype_inner for res_format if available
+            format = [resource.get('mimetype_inner', u'') or
+                      resource.get('format', u'')]
+            pkg_dict['res_format'] = pkg_dict.get('res_format', []) + format
+
         pkg_dict.pop('resources', None)
 
         rel_dict = collections.defaultdict(list)
